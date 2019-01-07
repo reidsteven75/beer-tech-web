@@ -9,7 +9,12 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 handlePhData = function(data) {
 	const parsed = parseFloat(data)
-	console.log('data:' + parsed)
+	if (isNaN(val)) {
+		console.log('invalid PH data')
+	}
+	else {
+		console.log('PH: ' + parsed)
+	}
 }
 
 app.post('/sensorPh', (req, res, next) => {
