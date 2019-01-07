@@ -16,10 +16,10 @@ app.post('/sensorPh', (req, res, next) => {
 	if (req.body) {
 		if (req.body.data) {
 			handlePhData(req.body.data)
-			return res.send(true)
+			return res.send({res:true})
 		}
 	}
-	return res.send(false)
+	return res.send({res:true})
 })
 
 app.listen(port, () => {
