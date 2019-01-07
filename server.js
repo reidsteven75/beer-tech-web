@@ -9,7 +9,12 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 app.post('/sensorPh', (req, res, next) => {
 	console.log(req.body)
-	res.send({success:true})
+	if (req.body) {
+		if (req.body.data) {
+			console.log(req.body.data);
+		}
+	}
+	res.send(true)
 })
 
 app.listen(port, () => {
