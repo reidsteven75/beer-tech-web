@@ -9,7 +9,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 handlePhData = function(data) {
 	const parsed = parseFloat(data)
-	consol.log('data:' + parsed)
+	console.log('data:' + parsed)
 }
 
 app.post('/sensorPh', (req, res, next) => {
