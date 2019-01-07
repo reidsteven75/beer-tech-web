@@ -9,7 +9,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 handlePhData = function(data) {
 	const parsed = parseFloat(data)
-	if (isNaN(val)) {
+	if (isNaN(parsed)) {
 		console.log('invalid PH data')
 	}
 	else {
