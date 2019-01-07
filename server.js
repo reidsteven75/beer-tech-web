@@ -7,7 +7,7 @@ const port = 3000
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
-app.post('/sensor/ph', (req, res, next) => {
+app.post('/sensorPh', (req, res, next) => {
 	console.log(req.body)
 	res.send({success:true})
 })
