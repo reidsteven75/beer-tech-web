@@ -7,14 +7,19 @@ const port = process.env.PORT || 3000
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
+handlePhData = function(data) {
+	const parsed = parseFloat(data)
+	consol.log('data:' + parsed)
+}
+
 app.post('/sensorPh', (req, res, next) => {
-	console.log(req.body)
 	if (req.body) {
 		if (req.body.data) {
-			console.log(req.body.data);
+			handlePhData(req.body.data)
+			return res.send(true)
 		}
 	}
-	res.send(true)
+	return res.send(false)
 })
 
 app.listen(port, () => {
