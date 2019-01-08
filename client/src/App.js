@@ -45,7 +45,7 @@ class App extends Component {
           </div>
           <h6>Last 2 Hours</h6>
           <div style={style.chart}>
-            <ChartPh data={data} duration={7200000} refresh={10000}/>
+            <ChartPh data={data} duration={7200000} refresh={30000}/>
           </div>
 
         </header>
