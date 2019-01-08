@@ -3,6 +3,7 @@ const app = express()
 var server = require('http').Server(app)
 var io = require('socket.io')(server)
 const bodyParser = require('body-parser')
+const path = require('path')
 
 const PORT = process.env.PORT || 3001
 const MOCK_DATA = process.env.MOCK_DATA || false
@@ -12,7 +13,11 @@ const MOCK_DATA = process.env.MOCK_DATA || false
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
-app.use(express.static('./app/public'))
+app.use(express.static(path.join(__dirname, 'client', 'build')))
+
+app.get('/', function(req, res) {
+	res.sendFile(path.join(__dirname, 'build', 'index.html'))
+})
 
 var Socket
 io.on('connection', function (socket) {
