@@ -23,6 +23,7 @@ class ChartPh extends Component {
               datasets: [{
                 data: [],
                 label: 'PH',
+                pointRadius: 1,
                 borderColor: 'rgb(255, 99, 132)',
                 backgroundColor: 'rgba(255, 99, 132, 0.5)',
                 lineTension: 0,
@@ -30,14 +31,15 @@ class ChartPh extends Component {
               }]
             }}
             options={{
+              maintainAspectRatio: false,
               legend: {
                 display: false
               },
               scales: {
                 yAxes: [{
                   ticks: {
-                    min: 0,
-                    max: 14
+                    // min: 0,
+                    // max: 14
                   }
                 }],
                 xAxes: [{

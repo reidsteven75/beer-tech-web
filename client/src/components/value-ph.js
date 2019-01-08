@@ -5,7 +5,7 @@ class ValuePh extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      value: 'N/A'
+      value: null
     }
   }
 
@@ -23,9 +23,12 @@ class ValuePh extends Component {
   }
 
   render() {
+
+    var value = this.state.value || 'unknown'
+
     return (
         <div>
-          {this.state.value}
+          {value}
         </div>
     );
   }

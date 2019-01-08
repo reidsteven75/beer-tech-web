@@ -51,6 +51,9 @@ handlePhData = function(value) {
 }
 
 app.post('/sensorPh', (req, res, next) => {
+
+	if (MOCK_DATA === 'true') { return; }
+
 	if (req.body) {
 		if (req.body.data) {
 			handlePhData(req.body.data)
