@@ -8,6 +8,7 @@ import ChartPh from './components/chart-ph';
 import ValuePh from './components/value-ph';
 
 const socket = openSocket('http://localhost:3001')
+// const socket = openSocket('http://localhost:3001')
 
 var data = {}
 
