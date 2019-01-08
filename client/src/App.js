@@ -41,11 +41,11 @@ class App extends Component {
           <ValuePh data={data}/>
           <h6>Last Minute</h6>
           <div style={style.chart}>
-            <ChartPh data={data} duration={600000}/>
+            <ChartPh data={data} duration={600000} refresh={1000}/>
           </div>
           <h6>Last 2 Hours</h6>
           <div style={style.chart}>
-            <ChartPh data={data} duration={7200000}/>
+            <ChartPh data={data} duration={7200000} refresh={10000}/>
           </div>
 
         </header>

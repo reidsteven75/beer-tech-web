@@ -8,6 +8,7 @@ class ChartPh extends Component {
   render() {
     const _this = this
     const duration = this.props.duration
+    const refresh = this.props.refresh
 
     var getLatestData = function() {
       var data = {
@@ -46,8 +47,8 @@ class ChartPh extends Component {
                   type: 'realtime',
                   realtime: {
                     duration: duration,
-                    delay: 2000,
-                    refresh: 1000,
+                    delay: 1000,
+                    refresh: refresh,
                     pause: false,
                     onRefresh: function(chart) {
                       var data = getLatestData()
