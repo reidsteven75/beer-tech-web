@@ -19,10 +19,8 @@ app.get('/*', function(req, res) {
 	res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
 })
 
-var Socket
 io.on('connection', function (socket) {
 	console.log('[socket]: connected')
-	Socket = socket
 })
 
 mockDataStreamPh = function() {
@@ -45,9 +43,8 @@ handlePhData = function(value) {
 		value: parsed,
 		timestamp: Date.now()
 	}
-	if (Socket) {
-		Socket.emit('data-update-ph', data)
-	}
+
+	io.sockets.emit('data-update-ph', data)
 }
 
 app.post('/sensorPh', (req, res, next) => {
