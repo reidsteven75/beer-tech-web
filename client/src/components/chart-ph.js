@@ -39,8 +39,8 @@ class ChartPh extends Component {
               scales: {
                 yAxes: [{
                   ticks: {
-                    suggestedMin: 4,
-                    suggestedMax: 10
+                    // suggestedMin: 4,
+                    // suggestedMax: 10
                   }
                 }],
                 xAxes: [{
