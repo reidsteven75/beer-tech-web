@@ -12,8 +12,8 @@ class ChartPh extends Component {
 
     var getLatestData = function() {
       var data = {
-        x: _this.props.data.x,
-        y: _this.props.data.y
+        x: _this.props.dataRealTime.x,
+        y: _this.props.dataRealTime.y
       }
       return data
     }

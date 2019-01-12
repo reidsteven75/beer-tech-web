@@ -11,7 +11,7 @@ class ValuePh extends Component {
 
   updateValue() {
     this.setState((state, props) => ({
-      value: props.data.y
+      value: props.dataRealTime.y
     }))
   }
 

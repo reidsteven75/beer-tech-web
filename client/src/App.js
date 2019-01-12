@@ -16,19 +16,25 @@ const style = {
 }
 
 // const socket = openSocket('https://beer-tech-web-prod.herokuapp.com/')
-const socket = openSocket('https://beer-tech-web-qa.herokuapp.com/')
-// const socket = openSocket('http://localhost:3001')
+// const socket = openSocket('https://beer-tech-web-qa.herokuapp.com/')
+const socket = openSocket('http://localhost:3001')
 
-var data = {}
+var dataRealTime = {}
+var dataHistorical = []
 
 socket.on('connect', function () { 
   console.log('[socket]: connected')
 })
 
+socket.on('data-historical-ph', function (message) { 
+  // console.log('[socket] data-historical-ph: ', message)
+  dataHistorical = message
+})
+
 socket.on('data-update-ph', function (message) { 
   // console.log('[socket] data-update-ph: ', message)
-  data.y = message.value
-  data.x = message.timestamp
+  dataRealTime.y = message.value
+  dataRealTime.x = message.timestamp
 })
 
 class App extends Component {
@@ -38,14 +44,22 @@ class App extends Component {
         <header className="App-header">
 
           <h2>PH</h2>
-          <ValuePh data={data}/>
+          <ValuePh dataRealTime={dataRealTime}/>
           <h6>Last Minute</h6>
           <div style={style.chart}>
-            <ChartPh data={data} duration={600000} refresh={1000}/>
+            <ChartPh 
+              dataHistorical={dataHistorical}
+              dataRealTime={dataRealTime} 
+              duration={600000} 
+              refresh={1000}/>
           </div>
           <h6>Last 2 Hours</h6>
           <div style={style.chart}>
-            <ChartPh data={data} duration={7200000} refresh={30000}/>
+            <ChartPh 
+              dataHistorical={dataHistorical}
+              dataRealTime={dataRealTime} 
+              duration={7200000} 
+              refresh={30000}/>
           </div>
 
         </header>
