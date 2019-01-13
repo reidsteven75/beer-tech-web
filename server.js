@@ -6,7 +6,7 @@ const bodyParser = require('body-parser')
 const path = require('path')
 const MongoClient = require('mongodb').MongoClient
 const assert = require('assert')
-const http = require('http')
+const request = require('request')
 
 const PORT = process.env.PORT || 3001
 const MOCK_DATA = process.env.MOCK_DATA || false
