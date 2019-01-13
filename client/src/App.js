@@ -38,7 +38,7 @@ const style = {
 const charts = [
   {
     name: 'Last Minute',
-    durationMs: 600000,
+    durationMs: 60000,
     sampleRateMs: 1000,
     dataHistorical: []
   },
