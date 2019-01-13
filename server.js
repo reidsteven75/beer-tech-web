@@ -118,9 +118,7 @@ server.listen(PORT, () => {
 
 	// prevents heroku sleep
 	setInterval(function() {
-    http.get("https://beer-tech-web-prod.herokuapp.com/app");
+    request.get("https://beer-tech-web-prod.herokuapp.com/app")
 	}, 300000)
-
-	setInterval()
 
 })
