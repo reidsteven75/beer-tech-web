@@ -48,7 +48,7 @@ class ChartPh extends Component {
                   type: 'realtime',
                   realtime: {
                     duration: duration,
-                    delay: 1000,
+                    delay: 2000,
                     refresh: refresh,
                     pause: false,
                     onRefresh: function(chart) {

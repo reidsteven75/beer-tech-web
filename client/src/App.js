@@ -39,7 +39,7 @@ const charts = [
   {
     name: 'Last Minute',
     durationMs: 60000,
-    sampleRateMs: 1000,
+    sampleRateMs: 500,
     dataHistorical: []
   },
   {
