@@ -9,6 +9,7 @@ class ChartPh extends Component {
     const _this = this
     const duration = this.props.duration
     const refresh = this.props.refresh
+    const dataHistorical = this.props.dataHistorical
 
     var getLatestData = function() {
       var data = {
@@ -22,7 +23,7 @@ class ChartPh extends Component {
           <Line
             data={{
               datasets: [{
-                data: [],
+                data: dataHistorical,
                 label: 'PH',
                 pointRadius: 1,
                 borderColor: 'rgb(255, 99, 132)',

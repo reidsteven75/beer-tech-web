@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import openSocket from 'socket.io-client';
+import axios from 'axios'
+import { MoonLoader } from 'react-spinners'
+import _ from "lodash"
+import * as moment from 'moment'
 
 // import logo from './logo.svg';
 import './App.css';
@@ -7,62 +11,139 @@ import './App.css';
 import ChartPh from './components/chart-ph';
 import ValuePh from './components/value-ph';
 
-const style = {
-  chart: {
-    height: '200px',
-    width: '90%',
-    position: 'relative'
-  }
-}
+const serverUrl = process.env.REACT_APP_SERVER_URL
 
-// const socket = openSocket('https://beer-tech-web-prod.herokuapp.com/')
-// const socket = openSocket('https://beer-tech-web-qa.herokuapp.com/')
-const socket = openSocket('http://localhost:3001')
-
-var dataRealTime = {}
-var dataHistorical = []
-
+const socket = openSocket(serverUrl)
 socket.on('connect', function () { 
-  console.log('[socket]: connected')
-})
-
-socket.on('data-historical-ph', function (message) { 
-  // console.log('[socket] data-historical-ph: ', message)
-  dataHistorical = message
+  // console.log('[socket]: connected')
 })
 
 socket.on('data-update-ph', function (message) { 
-  // console.log('[socket] data-update-ph: ', message)
   dataRealTime.y = message.value
   dataRealTime.x = message.timestamp
 })
 
+const style = {
+  chart: {
+    height: '200px',
+    width: '100%',
+    position: 'relative'
+  },
+  content: {
+    width: '90%',
+    padding: 20
+  }
+}
+
+const charts = [
+  {
+    name: 'Last Minute',
+    durationMs: 600000,
+    sampleRateMs: 1000,
+    dataHistorical: []
+  },
+  {
+    name: 'Last 2 Hours',
+    durationMs: 7200000,
+    sampleRateMs: 30000,
+    dataHistorical: []
+  },
+  {
+    name: 'Last 24 Hours',
+    durationMs: 86400000,
+    sampleRateMs: 300000,
+    dataHistorical: []
+  }
+]
+var dataRealTime = {}
+
 class App extends Component {
+
+  parseChartData(chart, data) {
+    const keyMap = {
+      value: 'y',
+      timestamp: 'x'
+    }
+    // filter & sort by duration
+    chart.dataHistorical = _.filter(data, function(n) {
+      return moment(n.timestamp).isAfter(moment().subtract(chart.durationMs, 'milliseconds'))
+    })
+    chart.dataHistorical = _.sortBy(chart.dataHistorical, ['timestamp'])
+    // sample
+    var sampleTimestamp = chart.dataHistorical[0].timestamp
+    chart.dataHistorical = _.filter(chart.dataHistorical, function(n) {
+      if (moment(n.timestamp).isSameOrAfter(moment(sampleTimestamp))) {
+        sampleTimestamp += chart.sampleRateMs
+        return true
+      }
+      else return false
+    })
+    // map keys so it can be rendered in chart
+    chart.dataHistorical = chart.dataHistorical.map(function(obj) {
+      return _.mapKeys(obj, function(value, key) {
+        return keyMap[key];
+      });
+    })
+    return chart
+  }
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      loading: true
+    }
+  }
+
+  componentDidMount() {
+    const _this = this
+    axios.get(serverUrl + '/historicals/ph')
+      .then(function (response) {
+        const data = response.data
+        charts.forEach(function(chart) {
+          chart = _this.parseChartData(chart, data)
+        })
+        return _this.setState({loading:false})
+      })
+      .catch(function (error) {
+        console.log(error)
+        return _this.setState({loading:false})
+      })
+  }
+
   render() {
+    let content
+    if (this.state.loading === true) {
+      content = <div>
+                  <MoonLoader
+                    color={'#36D7B7'}
+                    />
+                </div>
+    }
+    else {
+      let chartHtml = charts.map((chart) =>
+        <div key={chart.name}>
+          <h6>{chart.name}</h6>
+          <div style={style.chart}>
+            <ChartPh 
+              dataHistorical={chart.dataHistorical}
+              dataRealTime={dataRealTime} 
+              duration={chart.durationMs} 
+              refresh={chart.sampleRateMs}/>
+          </div>
+        </div>
+      )
+      content = <div style={style.content}>
+        <h2>PH</h2>
+        <ValuePh dataRealTime={dataRealTime}/>
+        {chartHtml}
+      </div>
+    }
+
     return (
       <div className="App">
-        <header className="App-header">
-
-          <h2>PH</h2>
-          <ValuePh dataRealTime={dataRealTime}/>
-          <h6>Last Minute</h6>
-          <div style={style.chart}>
-            <ChartPh 
-              dataHistorical={dataHistorical}
-              dataRealTime={dataRealTime} 
-              duration={600000} 
-              refresh={1000}/>
-          </div>
-          <h6>Last 2 Hours</h6>
-          <div style={style.chart}>
-            <ChartPh 
-              dataHistorical={dataHistorical}
-              dataRealTime={dataRealTime} 
-              duration={7200000} 
-              refresh={30000}/>
-          </div>
-
-        </header>
+        <main className="App-main">
+          {content}
+        </main>
       </div>
     );
   }

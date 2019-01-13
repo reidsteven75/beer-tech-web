@@ -17,26 +17,20 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static('client/build'))
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+})
+
 // DB
 const dbUrl = process.env.MONGODB_URI || 'mongodb://heroku_rmsh84q1:lv0193fj7bcfgonotsdq73aj43@ds155614.mlab.com:55614/heroku_rmsh84q1'
 const dbClient = new MongoClient(dbUrl, { useNewUrlParser: true })
 const dbName = process.env.MONGODB_NAME || 'heroku_rmsh84q1'
 var db
 
-app.get('/*', function(req, res) {
-	res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
-})
-
 io.on('connection', function (socket) {
 	console.log('[socket]: connected')
-
-	if (db) {
-		db.collection('sensor_data').find({}, { projection:{'_id':0, 'value':1,'timestamp':1 }}).toArray(function(err, docs) {
-			assert.equal(null, err)
-			io.sockets.emit('data-historical-ph', docs)
-		})
-	}
-
 })
 
 mockDataStreamPh = function() {
@@ -70,10 +64,32 @@ handlePhData = function(value) {
 	io.sockets.emit('data-update-ph', data)
 }
 
+app.get('/app', function(req, res) {
+	res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
+})
+
+app.get('/historicals/ph', (req, res) => {
+	if (db) {
+		db.collection('sensor_data').find( {} , { 
+			projection: {
+					'_id':0, 
+					'value':1,
+					'timestamp':1 
+			}}).toArray(function(err, docs) {
+				if (err) {
+					console.error(err.stack)
+					return res.status(500).send({error:err})
+				}
+				return res.send(docs)
+			})
+	}
+	else {
+		res.status(500).send({error:'no db connection'})
+	}
+})
+
 app.post('/sensorPh', (req, res, next) => {
-
 	if (MOCK_DATA === 'true') { return; }
-
 	if (req.body) {
 		if (req.body.data) {
 			handlePhData(req.body.data)
