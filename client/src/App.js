@@ -90,7 +90,8 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      loading: true
+      loading: true,
+      serverError: false
     }
   }
 
@@ -99,13 +100,19 @@ class App extends Component {
     axios.get(serverUrl + '/historicals/ph')
       .then(function (response) {
         const data = response.data
-        charts.forEach(function(chart) {
-          chart = _this.parseChartData(chart, data)
-        })
+        // if no data
+        if (!data) { }
+        else if (data.length === 0) { }
+        else {
+          charts.forEach(function(chart) {
+            chart = _this.parseChartData(chart, data)
+          })
+        }
         return _this.setState({loading:false})
       })
       .catch(function (error) {
         console.log(error)
+        _this.setState({serverError:true})
         return _this.setState({loading:false})
       })
   }
@@ -117,6 +124,14 @@ class App extends Component {
                   <MoonLoader
                     color={'#36D7B7'}
                     />
+                </div>
+    }
+    else if (this.state.serverError === true) {
+      content = <div>
+                  Server Unreachable
+                  <br/>
+                  <br/>
+                  Try Reloading App
                 </div>
     }
     else {
