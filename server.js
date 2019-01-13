@@ -6,6 +6,7 @@ const bodyParser = require('body-parser')
 const path = require('path')
 const MongoClient = require('mongodb').MongoClient
 const assert = require('assert')
+const  http = require('http')
 
 const PORT = process.env.PORT || 3001
 const MOCK_DATA = process.env.MOCK_DATA || false
@@ -114,5 +115,12 @@ server.listen(PORT, () => {
 	})
 
 	if (MOCK_DATA === 'true') { mockDataStreamPh() }
+
+	// prevents heroku sleep
+	setInterval(function() {
+    http.get("https://beer-tech-web-prod.herokuapp.com/app");
+	}, 300000)
+
+	setInterval()
 
 })
