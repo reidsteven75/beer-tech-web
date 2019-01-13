@@ -7,6 +7,7 @@ const path = require('path')
 const MongoClient = require('mongodb').MongoClient
 const assert = require('assert')
 const request = require('request')
+const favicon = require('serve-favicon')
 
 const PORT = process.env.PORT || 3001
 const MOCK_DATA = process.env.MOCK_DATA || false
@@ -17,6 +18,8 @@ const MOCK_DATA = process.env.MOCK_DATA || false
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static('client/build'))
+
+app.use(favicon(path.join(__dirname, 'client', 'build', 'favicon.ico')))
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
