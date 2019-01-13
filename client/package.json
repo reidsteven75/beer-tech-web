@@ -16,9 +16,10 @@
     "socket.io-client": "^2.2.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "env-cmd .env.local react-scripts start",
     "build:local": "env-cmd .env.local react-scripts build",
     "build:qa": "env-cmd .env.qa react-scripts build",
+    "build:prod": "env-cmd .env.prod react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
