@@ -30,6 +30,7 @@ const style = {
     position: 'relative'
   },
   content: {
+    width: '80%',
     padding: 20
   }
 }
