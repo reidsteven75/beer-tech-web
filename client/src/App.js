@@ -26,11 +26,10 @@ socket.on('data-update-ph', function (message) {
 const style = {
   chart: {
     height: '200px',
-    width: '100%',
+    width: 'auto',
     position: 'relative'
   },
   content: {
-    width: '90%',
     padding: 20
   }
 }
