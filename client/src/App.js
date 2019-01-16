@@ -84,6 +84,8 @@ class App extends Component {
         return keyMap[key];
       });
     })
+    // remove data from memory
+    data = null
     return chart
   }
 

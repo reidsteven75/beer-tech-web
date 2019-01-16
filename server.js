@@ -32,6 +32,13 @@ const dbUrl = process.env.MONGODB_URI || 'mongodb://heroku_rmsh84q1:lv0193fj7bcf
 const dbClient = new MongoClient(dbUrl, { useNewUrlParser: true })
 const dbName = process.env.MONGODB_NAME || 'heroku_rmsh84q1'
 var db
+const dbCollection = {
+	expireAfterSeconds: 86400,
+	expiryInterval: 60000
+}
+
+// Sensor Calibration
+const phOffset = 0
 
 io.on('connection', function (socket) {
 	console.log('[socket]: connected')
@@ -48,7 +55,7 @@ mockDataStreamPh = function() {
 }
 
 handlePhData = function(value) {
-	const parsed = parseFloat(value)
+	const parsed = parseFloat(value) - phOffset
 	if (isNaN(parsed)) {
 		return console.log('invalid PH data')
 	}
@@ -114,7 +121,20 @@ server.listen(PORT, () => {
 
 	dbClient.connect(function(err, client) {
 		db = client.db(dbName)
-		console.log('mongodb connected')
+		console.log('[mongodb] connected')
+
+		setInterval(function() {
+			console.log('[mongodb] removing old data...')
+			try {
+				const expireTimestamp = Date.now() - ( dbCollection.expireAfterSeconds * 1000 )
+				db.collection('sensor_data').deleteMany({timestamp: {$lt: expireTimestamp}})
+				console.log('[mongodb] success removing old data')
+			}
+			catch (error) {
+				console.log('[mongodb] error removing old data')
+				console.log(error)
+			}
+		}, dbCollection.expiryInterval)
 	})
 
 	if (MOCK_DATA === 'true') { mockDataStreamPh() }
