@@ -38,7 +38,7 @@ const dbCollection = {
 }
 
 // Sensor Calibration
-const phOffset = 0
+const phOffset = -0.1
 
 io.on('connection', function (socket) {
 	console.log('[socket]: connected')
@@ -55,7 +55,7 @@ mockDataStreamPh = function() {
 }
 
 handlePhData = function(value) {
-	const parsed = parseFloat(value) - phOffset
+	const parsed = parseFloat(value) + phOffset
 	if (isNaN(parsed)) {
 		return console.log('invalid PH data')
 	}
@@ -67,7 +67,7 @@ handlePhData = function(value) {
 
 	// save data in db
 	db.collection('sensor_data').insertOne(data, function(err, r) {
-		assert.equal(null, err);
+		assert.equal(null, err)
 		assert.equal(1, r.insertedCount)
 	})
 
@@ -127,12 +127,14 @@ server.listen(PORT, () => {
 			console.log('[mongodb] removing old data...')
 			try {
 				const expireTimestamp = Date.now() - ( dbCollection.expireAfterSeconds * 1000 )
-				db.collection('sensor_data').deleteMany({timestamp: {$lt: expireTimestamp}})
-				console.log('[mongodb] success removing old data')
+				db.collection('sensor_data').deleteMany({timestamp: {$lt: expireTimestamp}}, function(err, r) {
+					assert.equal(null, err)
+					console.log('[mongodb] success removing old data')
+				})
 			}
-			catch (error) {
+			catch (err) {
 				console.log('[mongodb] error removing old data')
-				console.log(error)
+				console.log(err)
 			}
 		}, dbCollection.expiryInterval)
 	})
