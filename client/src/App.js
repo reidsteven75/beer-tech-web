@@ -3,7 +3,7 @@ import openSocket from 'socket.io-client';
 import axios from 'axios'
 import { MoonLoader } from 'react-spinners'
 import _ from "lodash"
-import * as moment from 'moment'
+// import * as moment from 'moment'
 
 // import logo from './logo.svg';
 import './App.css';
@@ -24,11 +24,6 @@ socket.on('data-update-ph', function (message) {
 })
 
 const style = {
-  chart: {
-    height: '200px',
-    width: 'auto',
-    position: 'relative'
-  },
   content: {
     width: '80%',
     padding: 20
@@ -59,34 +54,37 @@ var dataRealTime = {}
 
 class App extends Component {
 
-  parseChartData(chart, data) {
+  mapChartData(chart) {
     const keyMap = {
       value: 'y',
       timestamp: 'x'
     }
-    // filter & sort by duration
-    chart.dataHistorical = _.filter(data, function(n) {
-      return moment(n.timestamp).isAfter(moment().subtract(chart.durationMs, 'milliseconds'))
-    })
-    chart.dataHistorical = _.sortBy(chart.dataHistorical, ['timestamp'])
-    // sample
-    var sampleTimestamp = chart.dataHistorical[0].timestamp
-    chart.dataHistorical = _.filter(chart.dataHistorical, function(n) {
-      if (moment(n.timestamp).isSameOrAfter(moment(sampleTimestamp))) {
-        sampleTimestamp += chart.sampleRateMs
-        return true
-      }
-      else return false
-    })
     // map keys so it can be rendered in chart
     chart.dataHistorical = chart.dataHistorical.map(function(obj) {
       return _.mapKeys(obj, function(value, key) {
         return keyMap[key];
       });
     })
-    // remove data from memory
-    data = null
     return chart
+  }
+
+  getChartData(chart) {
+    const _this = this
+    return axios.get(serverUrl + '/historicals/ph?duration=' + chart.durationMs + '&samplerate=' + chart.sampleRateMs)
+      .then(function (response) {
+        if (!response.data) { }
+        else if (response.data.length === 0) { }
+        else {
+          chart.dataHistorical = response.data
+          chart = _this.mapChartData(chart)
+        }
+        return ({chart:chart})
+      })
+      .catch(function (error) {
+        console.log({err:error})
+        return error
+      })
+
   }
 
   constructor(props) {
@@ -99,24 +97,20 @@ class App extends Component {
 
   componentDidMount() {
     const _this = this
-    axios.get(serverUrl + '/historicals/ph')
-      .then(function (response) {
-        const data = response.data
-        // if no data
-        if (!data) { }
-        else if (data.length === 0) { }
-        else {
-          charts.forEach(function(chart) {
-            chart = _this.parseChartData(chart, data)
-          })
-        }
-        return _this.setState({loading:false})
+
+    // App loading animation
+    setTimeout(function() {
+      _this.setState({loading:false})
+      charts.forEach(function(chart) {
+        chart.isLoading = true
+        _this.getChartData(chart).then(function(res) {
+          chart.isLoading = false
+          _this.setState({updateData:true})
+          if (res.err) { chart.isError = true }
+          else { chart = res.chart }
+        })
       })
-      .catch(function (error) {
-        console.log(error)
-        _this.setState({serverError:true})
-        return _this.setState({loading:false})
-      })
+    }, 1000)
   }
 
   render() {
@@ -139,20 +133,22 @@ class App extends Component {
     else {
       let chartHtml = charts.map((chart) =>
         <div key={chart.name}>
-          <h6>{chart.name}</h6>
-          <div style={style.chart}>
-            <ChartPh 
-              dataHistorical={chart.dataHistorical}
-              dataRealTime={dataRealTime} 
-              duration={chart.durationMs} 
-              refresh={chart.sampleRateMs}/>
-          </div>
-        </div>
+          <ChartPh 
+            isLoading={chart.isLoading}
+            isError={chart.isError}
+            title={chart.name}
+            dataHistorical={chart.dataHistorical}
+            dataRealTime={dataRealTime} 
+            duration={chart.durationMs} 
+            refresh={chart.sampleRateMs}/>
+        </div>    
       )
       content = <div style={style.content}>
         <h2>PH</h2>
         <ValuePh dataRealTime={dataRealTime}/>
+        <br/>
         {chartHtml}
+        <br/>
       </div>
     }
 

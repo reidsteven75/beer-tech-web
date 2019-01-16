@@ -8,6 +8,9 @@ const MongoClient = require('mongodb').MongoClient
 const assert = require('assert')
 const request = require('request')
 const favicon = require('serve-favicon')
+const _ = require('lodash')
+const moment = require('moment')
+const size = require('object-sizeof')
 
 const PORT = process.env.PORT || 3001
 const MOCK_DATA = process.env.MOCK_DATA || false
@@ -28,9 +31,11 @@ app.use(function(req, res, next) {
 })
 
 // DB
-const dbUrl = process.env.MONGODB_URI || 'mongodb://heroku_rmsh84q1:lv0193fj7bcfgonotsdq73aj43@ds155614.mlab.com:55614/heroku_rmsh84q1'
+// const dbUrl = process.env.MONGODB_URI || 'mongodb://heroku_rmsh84q1:lv0193fj7bcfgonotsdq73aj43@ds155614.mlab.com:55614/heroku_rmsh84q1'
+const dbUrl = process.env.MONGODB_URI || 'mongodb://heroku_dbzp1j61:76qt29t46vmji918sl0j0ffsne@ds155774.mlab.com:55774/heroku_dbzp1j61'
 const dbClient = new MongoClient(dbUrl, { useNewUrlParser: true })
-const dbName = process.env.MONGODB_NAME || 'heroku_rmsh84q1'
+// const dbName = process.env.MONGODB_NAME || 'heroku_rmsh84q1'
+const dbName = process.env.MONGODB_NAME || 'heroku_dbzp1j61'
 var db
 const dbCollection = {
 	expireAfterSeconds: 86400,
@@ -75,20 +80,34 @@ handlePhData = function(value) {
 	io.sockets.emit('data-update-ph', data)
 }
 
+calcResponseSize = function(data) {
+	console.log('size (kB): ', size(data)/1000)
+}
+
 calcResponseTime = function(endpoint, startTime) {
 	const endTime = Date.now()
 	var timeDiff = (( endTime - startTime ) / 1000).toFixed(2)
-	console.log(endpoint, 'res time (s): ', timeDiff)
+	console.log(endpoint)
+	console.log('time (s): ', timeDiff)
 }
 
 app.get('/app', function(req, res) {
 	res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
 })
 
+// PARAMS
+// sampleRate: seconds
+// duration: seconds
 app.get('/historicals/ph', (req, res) => {
 	const responseStarted = Date.now()
-	if (db) {
-		db.collection('sensor_data').find( {} , { 
+	const dbQuery = {}
+	const sampleRateMs = parseInt(req.query.samplerate)
+	if (req.query.duration) { 
+		const cutoffMs = Date.now() - (parseInt(req.query.duration))
+		dbQuery.timestamp = { $gte: cutoffMs }
+	}
+	try {
+		db.collection('sensor_data').find( dbQuery , { 
 			projection: {
 					'_id':0, 
 					'value':1,
@@ -98,12 +117,26 @@ app.get('/historicals/ph', (req, res) => {
 					console.error(err.stack)
 					return res.status(500).send({error:err})
 				}
+				// sample
+				if (sampleRateMs) {
+					var docs = _.sortBy(docs, ['timestamp'])
+					var sampleTimestamp = docs[0].timestamp
+					docs = _.filter(docs, function(n) {
+						if (moment(n.timestamp).isSameOrAfter(moment(sampleTimestamp))) {
+							sampleTimestamp += sampleRateMs
+							return true
+						}
+						else return false
+					})
+				}
+				// send response
 				calcResponseTime(req.url, responseStarted)
+				calcResponseSize(docs)
 				return res.send(docs)
 			})
 	}
-	else {
-		res.status(500).send({error:'no db connection'})
+	catch (err) {
+		res.status(500).send({error:err})
 	}
 })
 
