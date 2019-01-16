@@ -55,7 +55,7 @@ mockDataStreamPh = function() {
 }
 
 handlePhData = function(value) {
-	const parsed = parseFloat(value) + phOffset
+	const parsed = (parseFloat(value) + phOffset).toFixed(2)
 	if (isNaN(parsed)) {
 		return console.log('invalid PH data')
 	}
@@ -75,11 +75,18 @@ handlePhData = function(value) {
 	io.sockets.emit('data-update-ph', data)
 }
 
+calcResponseTime = function(endpoint, startTime) {
+	const endTime = Date.now()
+	var timeDiff = (( endTime - startTime ) / 1000).toFixed(2)
+	console.log(endpoint, 'res time (s): ', timeDiff)
+}
+
 app.get('/app', function(req, res) {
 	res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
 })
 
 app.get('/historicals/ph', (req, res) => {
+	const responseStarted = Date.now()
 	if (db) {
 		db.collection('sensor_data').find( {} , { 
 			projection: {
@@ -91,6 +98,7 @@ app.get('/historicals/ph', (req, res) => {
 					console.error(err.stack)
 					return res.status(500).send({error:err})
 				}
+				calcResponseTime(req.url, responseStarted)
 				return res.send(docs)
 			})
 	}
