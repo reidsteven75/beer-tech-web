@@ -59,7 +59,7 @@ handlePhData = function(value) {
 	if (isNaN(parsed)) {
 		return console.log('invalid PH data')
 	}
-	console.log('PH: ' + value)
+	console.log('PH: ' + parsed)
 	const data = {
 		value: parsed,
 		timestamp: Date.now()
