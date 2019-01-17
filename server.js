@@ -22,7 +22,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static('client/build'))
 
-app.use(favicon(path.join(__dirname, 'client', 'build', 'favicon.ico')))
+// app.use(favicon(path.join(__dirname, 'client', 'build', 'icons', 'favicon.ico')))
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
