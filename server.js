@@ -42,6 +42,7 @@ const dbCollection = {
 
 // Sensor Calibration
 const phOffset = -0.21
+const phDecimals = 4
 
 io.on('connection', function (socket) {
 	console.log('[socket]: connected')
@@ -52,13 +53,13 @@ mockDataStreamPh = function() {
 	var value = 7
 	setInterval(function() {
 		value += Math.random() - 0.5
-		handlePhData(value.toFixed(2))
+		handlePhData(value.toFixed(phDecimals))
 	}, 2000)
 
 }
 
 handlePhData = function(value) {
-	const parsed = (parseFloat(value) + phOffset).toFixed(2)
+	const parsed = (parseFloat(value) + phOffset).toFixed(phDecimals)
 	if (isNaN(parsed)) {
 		return console.log('invalid PH data')
 	}
