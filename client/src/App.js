@@ -1,17 +1,40 @@
-import React, { Component } from 'react';
-import openSocket from 'socket.io-client';
+import React, { Component } from 'react'
+import openSocket from 'socket.io-client'
 import axios from 'axios'
 import { MoonLoader } from 'react-spinners'
-import _ from "lodash"
+import _ from 'lodash'
 // import * as moment from 'moment'
+
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
+import cyan from '@material-ui/core/colors/cyan'
+import red from '@material-ui/core/colors/red'
 
 // import logo from './logo.svg';
 import './App.css';
 
-import ChartPh from './components/chart-ph';
-import ValuePh from './components/value-ph';
+import ChartPh from './components/chart-ph'
+import ValuePh from './components/value-ph'
+import Help from './components/help'
 
 const serverUrl = process.env.REACT_APP_SERVER_URL
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      light: cyan[300],
+      main: cyan[500],
+      dark: cyan[700],
+    },
+    secondary: {
+      light: red[300],
+      main: red[500],
+      dark: red[700],
+    },
+  },
+  typography: {
+    useNextVariants: true,
+  }
+})
 
 const socket = openSocket(serverUrl)
 socket.on('connect', function () { 
@@ -149,16 +172,20 @@ class App extends Component {
         <br/>
         {chartHtml}
         <br/>
+        <Help/>
+        <br/>
       </div>
     }
 
     return (
-      <div className="App">
-        <main className="App-main">
-          {content}
-        </main>
-      </div>
-    );
+      <MuiThemeProvider theme={theme}>
+        <div className="App">
+          <main className="App-main">
+            {content}
+          </main>
+        </div> 
+      </MuiThemeProvider>
+    )
   }
 }
 

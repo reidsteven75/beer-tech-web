@@ -31,11 +31,9 @@ app.use(function(req, res, next) {
 })
 
 // DB
-// const dbUrl = process.env.MONGODB_URI || 'mongodb://heroku_rmsh84q1:lv0193fj7bcfgonotsdq73aj43@ds155614.mlab.com:55614/heroku_rmsh84q1'
-const dbUrl = process.env.MONGODB_URI || 'mongodb://heroku_dbzp1j61:76qt29t46vmji918sl0j0ffsne@ds155774.mlab.com:55774/heroku_dbzp1j61'
+const dbUrl = process.env.MONGODB_URI || 'mongodb://heroku_rmsh84q1:lv0193fj7bcfgonotsdq73aj43@ds155614.mlab.com:55614/heroku_rmsh84q1'
 const dbClient = new MongoClient(dbUrl, { useNewUrlParser: true })
-// const dbName = process.env.MONGODB_NAME || 'heroku_rmsh84q1'
-const dbName = process.env.MONGODB_NAME || 'heroku_dbzp1j61'
+const dbName = process.env.MONGODB_NAME || 'heroku_rmsh84q1'
 var db
 const dbCollection = {
 	expireAfterSeconds: 86400,
