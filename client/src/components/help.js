@@ -57,6 +57,8 @@ class Help extends Component {
 									<li>Choose wifi network and enter password</li>
 									<li>Device will try to connect. If it’s successful you won’t see the “Wifi Connect” network anymore, and the device will be ready to use</li>
 								</ol>
+							<h4>Readings Are Innacurate and Jumping All Over The Place</h4>
+							Disconnect & reconnect the usb cable that's accessable from the top of the larger computer
 							<h4>Ensuring Accurate Readings</h4>
 								<ul>
 									<li>READINGS WILL BE SUPER RANDOM IF THE SENSOR BOX IS MOVED</li>
