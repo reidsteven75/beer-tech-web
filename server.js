@@ -41,7 +41,7 @@ const dbCollection = {
 }
 
 // Sensor Calibration
-const phOffset = -0.21
+const phOffset = -0.11
 const phDecimals = 2
 
 io.on('connection', function (socket) {
