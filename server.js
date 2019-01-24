@@ -182,8 +182,8 @@ server.listen(PORT, () => {
 	if (MOCK_DATA === 'true') { mockDataStreamPh() }
 
 	// prevents heroku sleep
-	setInterval(function() {
-    request.get("https://beer-tech-web-prod.herokuapp.com/app")
-	}, 300000)
+	// setInterval(function() {
+    // request.get("https://beer-tech-web-prod.herokuapp.com/app")
+	// }, 300000)
 
 })
