@@ -116,8 +116,11 @@ app.get('/historicals/ph', (req, res) => {
 					console.error(err.stack)
 					return res.status(500).send({error:err})
 				}
+				else if (!docs[0]) {
+					return res.status(500).send({error:'record error'})
+				}
 				// sample
-				if (sampleRateMs) {
+				else if (sampleRateMs) {
 					var docs = _.sortBy(docs, ['timestamp'])
 					var sampleTimestamp = docs[0].timestamp
 					docs = _.filter(docs, function(n) {
