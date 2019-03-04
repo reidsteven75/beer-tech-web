@@ -142,10 +142,11 @@ app.get('/historicals/ph', (req, res) => {
 	}
 })
 
-app.post('/sensorPh', (req, res, next) => {
+app.post('/sensor', (req, res, next) => {
 	if (MOCK_DATA === 'true') { return; }
 	if (req.body) {
 		if (req.body.data) {
+			console.log(req.body.data)
 			handlePhData(req.body.data)
 			return res.send({res:true})
 		}
