@@ -27,7 +27,7 @@ const style = {
   }
 }
 
-class ChartPh extends Component {
+class ChartSensor extends Component {
 
   checkLoaded() {
     if (this.props.isLoading === false) {
@@ -76,8 +76,8 @@ class ChartPh extends Component {
             data: dataHistorical,
             label: 'PH',
             pointRadius: 1,
-            borderColor: 'rgb(255, 99, 132)',
-            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            borderColor: this.props.borderColor,
+            backgroundColor: this.props.backgroundColor,
             lineTension: 0,
             // borderDash: [8, 4]
           }]
@@ -133,4 +133,4 @@ class ChartPh extends Component {
   }
 }
 
-export default ChartPh;
+export default ChartSensor;

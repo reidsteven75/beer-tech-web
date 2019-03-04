@@ -43,6 +43,11 @@ const dbCollection = {
 // Sensor Calibration
 const phOffset = -0.11
 const phDecimals = 2
+const phTag = "[PH]"
+
+const tempOffset = -0
+const tempDecimals = 2
+const tempTag = "[TEMP]"
 
 io.on('connection', function (socket) {
 	console.log('[socket]: connected')
@@ -50,21 +55,49 @@ io.on('connection', function (socket) {
 
 mockDataStreamPh = function() {
 
-	var value = 7
 	setInterval(function() {
-		value += Math.random() - 0.5
-		handlePhData(value.toFixed(phDecimals))
+		var phValue = 7
+		var tempValue = 21
+
+		phValue += (Math.random() - 0.5)
+		phValue = phValue.toFixed(phDecimals).toString()
+		handleSensorData(phTag + phValue)
+
+		tempValue += (Math.random() - 0.5)
+		tempValue = tempValue.toFixed(tempDecimals).toString()
+		handleSensorData(tempTag + tempValue)
 	}, 2000)
 
 }
 
-handlePhData = function(value) {
-	const parsed = (parseFloat(value) + phOffset).toFixed(phDecimals)
-	if (isNaN(parsed)) {
-		return console.log('invalid PH data')
+handleSensorData = function(sensorData) {
+
+	var parsedSensorData = ""
+	var parsed = ""
+	var sensorType = ""
+
+	if (sensorData.indexOf(phTag) !== -1) {
+		parsedSensorData = sensorData.replace(phTag, "")
+		parsed = (parseFloat(parsedSensorData) + phOffset).toFixed(phDecimals)
+		sensorType = "PH"
 	}
-	console.log('PH: ' + parsed)
+	else if (sensorData.indexOf(tempTag) !== -1) {
+		parsedSensorData = sensorData.replace(tempTag, "")
+		parsed = (parseFloat(parsedSensorData) + tempOffset).toFixed(tempDecimals)
+		sensorType = "TEMP"
+	}
+	else {
+		console.log('invalid sensor data')
+		console.log(sensorData)
+		return 
+	}
+
+	if (isNaN(parsed)) {
+		return console.log('invalid sensor data')
+	}
+	console.log(sensorType + ": " + parsed)
 	const data = {
+		sensor: sensorType,
 		value: parsed,
 		timestamp: Date.now()
 	}
@@ -76,7 +109,7 @@ handlePhData = function(value) {
 	})
 
 	// update clients in real-time
-	io.sockets.emit('data-update-ph', data)
+	io.sockets.emit('data-update', data)
 }
 
 calcResponseSize = function(data) {
@@ -97,13 +130,17 @@ app.get('/app', function(req, res) {
 // PARAMS
 // sampleRate: seconds
 // duration: seconds
-app.get('/historicals/ph', (req, res) => {
+app.get('/historicals', (req, res) => {
 	const responseStarted = Date.now()
 	const dbQuery = {}
 	const sampleRateMs = parseInt(req.query.samplerate)
 	if (req.query.duration) { 
 		const cutoffMs = Date.now() - (parseInt(req.query.duration))
 		dbQuery.timestamp = { $gte: cutoffMs }
+	}
+	if (req.query.sensor) { 
+		console.log(req.query.sensor)
+		dbQuery.sensor = (req.query.sensor).toUpperCase()
 	}
 	try {
 		db.collection('sensor_data').find( dbQuery , { 
@@ -146,8 +183,7 @@ app.post('/sensor', (req, res, next) => {
 	if (MOCK_DATA === 'true') { return; }
 	if (req.body) {
 		if (req.body.data) {
-			console.log(req.body.data)
-			handlePhData(req.body.data)
+			handleSensorData(req.body.data)
 			return res.send({res:true})
 		}
 	}
