@@ -21,7 +21,7 @@ const style = {
     height: '240px',
     width: 'auto',
     position: 'relative',
-    padding: '15px',
+    padding: '0px',
     paddingBottom: '40px',
     marginBottom: '20px'
   }
@@ -65,6 +65,7 @@ class ChartSensor extends Component {
         <div style={style.loader}>
           <MoonLoader
             size={30}
+            css={{boxSizing: 'content-box'}}
             color={'#36D7B7'}
             />
         </div>

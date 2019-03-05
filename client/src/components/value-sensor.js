@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-class ValuePh extends Component {
+class ValueSensor extends Component {
 
   constructor(props) {
     super(props)
@@ -11,7 +11,8 @@ class ValuePh extends Component {
 
   updateValue() {
     this.setState((state, props) => ({
-      value: props.dataRealTime.y
+      value: props.dataRealTime.y,
+      unit: props.unit
     }))
   }
 
@@ -24,14 +25,15 @@ class ValuePh extends Component {
 
   render() {
 
-    var value = this.state.value || 'unknown'
+    const value = this.state.value || 'unknown'
+    const unit = this.state.unit 
 
     return (
         <div>
-          {value}
+          {value} {unit}
         </div>
     );
   }
 }
 
-export default ValuePh;
+export default ValueSensor;

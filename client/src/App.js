@@ -56,7 +56,7 @@ socket.on('data-update', function (message) {
 
 const style = {
   content: {
-    width: '80%',
+    width: '100%',
     padding: 20
   }
 }
@@ -185,6 +185,7 @@ class App extends Component {
     if (this.state.loading === true) {
       content = <div>
                   <MoonLoader
+                    css={{boxSizing: 'content-box'}}
                     color={'#36D7B7'}
                     />
                 </div>
@@ -237,7 +238,7 @@ class App extends Component {
           </Col>
           <Col sm={6}>
             <h2>TEMP</h2>
-            <ValueSensor dataRealTime={dataRealTime.temp}/>
+            <ValueSensor dataRealTime={dataRealTime.temp} unit={'°C'}/>
             <br/>
             {chartTempHtml}
           </Col>

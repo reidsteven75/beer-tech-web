@@ -59,6 +59,7 @@ class Help extends Component {
 								</ol>
 							<h4>Readings Are Innacurate and Jumping All Over The Place</h4>
 							Disconnect & reconnect the usb cable that's accessable from the top of the larger computer
+							<br/><br/>
 							<h4>Ensuring Accurate Readings</h4>
 								<ul>
 									<li>READINGS WILL BE SUPER RANDOM IF THE SENSOR BOX IS MOVED</li>
@@ -71,10 +72,18 @@ class Help extends Component {
 								</ul>
 							<h4>PH Sensor</h4>
 							<ul>
-								<li>Model: SEN0169</li>
+								<li>Model: Atlas Scientific SEN0169</li>
 								<li>Measuring Range: 0-14PH</li>	
 								<li>Measuring Temperature: 0-60 C</li>	
 								<li>Accuracy: ± 0.2pH @ 25 C</li>	
+							</ul>
+							<h4>Temp. Sensor</h4>
+							<ul>
+								<li>Model: Atlas Scientific PT-1000</li>
+								<li>Measuring Range: -200°C to 850°C</li>	
+								<li>Measuring Temperature: 0-60 C</li>	
+								<li>Accuracy: ± 0.15 + 0.002*t</li>	
+								<li>Reaction Time: 90% in 13s</li>
 							</ul>
 
             </DialogContentText>
