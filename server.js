@@ -41,7 +41,7 @@ const dbCollection = {
 }
 
 // Sensor Calibration
-const phOffset = 0.5
+const phOffset = -0.3
 const phDecimals = 2
 const phTag = "[PH]"
 
