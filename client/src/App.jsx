@@ -134,12 +134,10 @@ class App extends Component {
     console.log('---------', {serverUrl})
     return axios.get(serverUrl + '/historicals?sensor=' + sensor + '&duration=' + chart.durationMs + '&samplerate=' + chart.sampleRateMs)
       .then(function (response) {
-        if (!response.data) { }
-        else if (response.data.length === 0) { }
-        else {
+        if (response.data) {
           chart.dataHistorical = response.data
-          chart = _this.mapChartData(chart)
         }
+        chart = _this.mapChartData(chart)
         return ({chart:chart})
       })
       .catch(function (error) {
