@@ -18,7 +18,8 @@ import ValueSensor from './components/value-sensor'
 import Help from './components/help'
 // import { SlowBuffer } from 'buffer';
 
-const serverUrl = process.env.REACT_APP_SERVER_URL
+const serverUrl = process.env.SERVER_URL || 'http://localhost:3001'
+console.log({serverUrl})
 
 const theme = createMuiTheme({
   palette: {
@@ -126,6 +127,7 @@ class App extends Component {
 
   getChartData(chart, sensor) {
     const _this = this
+    console.log('---------', {serverUrl})
     return axios.get(serverUrl + '/historicals?sensor=' + sensor + '&duration=' + chart.durationMs + '&samplerate=' + chart.sampleRateMs)
       .then(function (response) {
         if (!response.data) { }

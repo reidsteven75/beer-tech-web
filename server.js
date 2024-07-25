@@ -4,7 +4,7 @@ var server = require('http').Server(app)
 var io = require('socket.io')(server)
 const bodyParser = require('body-parser')
 const path = require('path')
-const MongoClient = require('mongodb').MongoClient
+const { MongoClient, ServerApiVersion } = require('mongodb')
 const assert = require('assert')
 const request = require('request')
 const favicon = require('serve-favicon')
@@ -31,9 +31,15 @@ app.use(function(req, res, next) {
 })
 
 // DB
-const dbUrl = process.env.MONGODB_URI || 'mongodb://heroku_rmsh84q1:lv0193fj7bcfgonotsdq73aj43@ds155614.mlab.com:55614/heroku_rmsh84q1'
-const dbClient = new MongoClient(dbUrl, { useNewUrlParser: true })
-const dbName = process.env.MONGODB_NAME || 'heroku_rmsh84q1'
+const dbUrl = process.env.MONGODB_URI || 'mongodb+srv://reidsteven75:IronMaiden%4075@beverage-sensors.uysj9ft.mongodb.net/?retryWrites=true&w=majority&appName=beverage-sensors'
+const dbClient = new MongoClient(dbUrl, {
+	serverApi: {
+		version: ServerApiVersion.v1,
+		strict: true,
+		deprecationErrors: true,
+	}
+})
+const dbName = process.env.MONGODB_NAME || 'beverage-sensors-db'
 var db
 const dbCollection = {
 	expireAfterSeconds: 86400,
@@ -102,14 +108,20 @@ handleSensorData = function(sensorData) {
 		timestamp: Date.now()
 	}
 
-	// save data in db
-	db.collection('sensor_data').insertOne(data, function(err, r) {
-		assert.equal(null, err)
-		assert.equal(1, r.insertedCount)
-	})
-
 	// update clients in real-time
 	io.sockets.emit('data-update', data)
+
+	// save data in db
+	if (db) {
+		db.collection('sensor_data').insertOne(data, function(err, r) {
+			assert.equal(null, err)
+			assert.equal(1, r.insertedCount)
+		})	
+	}
+	else {
+		console.warn(`could not save data in db`)
+	}
+
 }
 
 calcResponseSize = function(data) {
@@ -190,7 +202,7 @@ app.post('/sensor', (req, res, next) => {
 	return res.send({res:true})
 })
 
-server.listen(PORT, () => {
+server.listen(PORT, async() => {
 
 	console.log('====================')
   console.log('BEER TECH: web server')
@@ -199,9 +211,13 @@ server.listen(PORT, () => {
 	console.log('MOCK_DATA: ', MOCK_DATA)
 	console.log('====================')
 
-	dbClient.connect(function(err, client) {
-		db = client.db(dbName)
-		console.log('[mongodb] connected')
+	try {
+    // Connect the client to the server	(optional starting in v4.7)
+    await dbClient.connect()
+    // Send a ping to confirm a successful connection
+    await dbClient.db(dbName).command({ ping: 1 })
+    console.log("[mongodb] connected")
+		db = dbClient.db(dbName)
 
 		setInterval(function() {
 			console.log('[mongodb] removing old data...')
@@ -217,13 +233,12 @@ server.listen(PORT, () => {
 				console.log(err)
 			}
 		}, dbCollection.expiryInterval)
-	})
+  } 
+	catch(error) {
+		console.error(error)
+    await dbClient.close()
+  }
 
 	if (MOCK_DATA === 'true') { mockDataStreamPh() }
-
-	// prevents heroku sleep
-	// setInterval(function() {
-    // request.get("https://beer-tech-web-prod.herokuapp.com/app")
-	// }, 300000)
 
 })
