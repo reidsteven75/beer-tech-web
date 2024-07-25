@@ -37,6 +37,8 @@ const dbClient = new MongoClient(dbUrl, {
 		version: ServerApiVersion.v1,
 		strict: true,
 		deprecationErrors: true,
+		tlsAllowInvalidCertificates: true, // Allow invalid certificates
+  	tlsInsecure: true // Allow insecure connections
 	}
 })
 const dbName = process.env.MONGODB_NAME || 'beverage-sensors-db'
