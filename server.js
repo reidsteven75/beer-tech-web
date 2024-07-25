@@ -31,14 +31,14 @@ app.use(function(req, res, next) {
 })
 
 // DB
-const dbUrl = process.env.MONGODB_URI || 'mongodb+srv://reidsteven75:IronMaiden%4075@beverage-sensors.uysj9ft.mongodb.net/?retryWrites=true&w=majority&appName=beverage-sensors'
+const dbUrl = process.env.MONGODB_URI || 'mongodb+srv://reidsteven75:IronMaiden%4075@beverage-sensors.uysj9ft.mongodb.net'
 const dbClient = new MongoClient(dbUrl, {
 	serverApi: {
 		version: ServerApiVersion.v1,
-		strict: true,
-		deprecationErrors: true,
-		tlsAllowInvalidCertificates: true, // Allow invalid certificates
-  	tlsInsecure: true // Allow insecure connections
+		// strict: true,
+		// deprecationErrors: true,
+		// tlsAllowInvalidCertificates: true, // Allow invalid certificates
+  	// tlsInsecure: true // Allow insecure connections
 	}
 })
 const dbName = process.env.MONGODB_NAME || 'beverage-sensors-db'
