@@ -163,6 +163,7 @@ app.get('/historicals', (req, res) => {
 					'value':1,
 					'timestamp':1 
 			}}).toArray(function(err, docs) {
+				console.log(docs)
 				if (err) {
 					console.error(err.stack)
 					return res.status(500).send({error:err})
