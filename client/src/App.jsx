@@ -22,7 +22,7 @@ import Help from './components/help'
 // const serverUrl = 'http://localhost:3001'
 
 // prod
-const serverUrl = 'https://beer-tech-web.onrender.com/'
+const serverUrl = 'https://beer-tech-web.onrender.com'
 console.log({serverUrl})
 
 const theme = createMuiTheme({
