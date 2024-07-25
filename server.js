@@ -31,14 +31,12 @@ app.use(function(req, res, next) {
 })
 
 // DB
-const dbUrl = process.env.MONGODB_URI || 'mongodb+srv://reidsteven75:IronMaiden%4075@beverage-sensors.uysj9ft.mongodb.net'
+const dbUrl = process.env.MONGODB_URI || 'mongodb+srv://reidsteven75:IronMaiden%4075@beverage-sensors.uysj9ft.mongodb.net?retryWrites=true&w=majority&appName=beverage-sensors'
 const dbClient = new MongoClient(dbUrl, {
 	serverApi: {
 		version: ServerApiVersion.v1,
-		// strict: true,
-		// deprecationErrors: true,
-		// tlsAllowInvalidCertificates: true, // Allow invalid certificates
-  	// tlsInsecure: true // Allow insecure connections
+		strict: true,
+		deprecationErrors: true
 	}
 })
 const dbName = process.env.MONGODB_NAME || 'beverage-sensors-db'
@@ -144,7 +142,7 @@ app.get('/app', function(req, res) {
 // PARAMS
 // sampleRate: seconds
 // duration: seconds
-app.get('/historicals', (req, res) => {
+app.get('/historicals', async(req, res) => {
 	const responseStarted = Date.now()
 	const dbQuery = {}
 	const sampleRateMs = parseInt(req.query.samplerate)
@@ -153,43 +151,35 @@ app.get('/historicals', (req, res) => {
 		dbQuery.timestamp = { $gte: cutoffMs }
 	}
 	if (req.query.sensor) { 
-		console.log(req.query.sensor)
+		// console.log('/historicals:' + req.query.sensor)
 		dbQuery.sensor = (req.query.sensor).toUpperCase()
 	}
 	try {
-		db.collection('sensor_data').find( dbQuery , { 
-			projection: {
-					'_id':0, 
-					'value':1,
-					'timestamp':1 
-			}}).toArray(function(err, docs) {
-				console.log(docs)
-				if (err) {
-					console.error(err.stack)
-					return res.status(500).send({error:err})
+		const projection = {
+			'_id':0, 
+			'value':1,
+			'timestamp':1 
+		}
+		let docs = await db.collection('sensor_data').find(dbQuery, projection).toArray()
+		// sample
+		if (sampleRateMs) {
+			docs = _.sortBy(docs, ['timestamp'])
+			var sampleTimestamp = docs[0].timestamp
+			docs = _.filter(docs, function(n) {
+				if (moment(n.timestamp).isSameOrAfter(moment(sampleTimestamp))) {
+					sampleTimestamp += sampleRateMs
+					return true
 				}
-				else if (!docs[0]) {
-					return res.status(500).send({error:'record error'})
-				}
-				// sample
-				else if (sampleRateMs) {
-					var docs = _.sortBy(docs, ['timestamp'])
-					var sampleTimestamp = docs[0].timestamp
-					docs = _.filter(docs, function(n) {
-						if (moment(n.timestamp).isSameOrAfter(moment(sampleTimestamp))) {
-							sampleTimestamp += sampleRateMs
-							return true
-						}
-						else return false
-					})
-				}
-				// send response
-				calcResponseTime(req.url, responseStarted)
-				calcResponseSize(docs)
-				return res.send(docs)
+				else return false
 			})
+		}
+		// send response
+		calcResponseTime(req.url, responseStarted)
+		calcResponseSize(docs)
+		return res.send(docs)
 	}
 	catch (err) {
+		console.error(err)
 		res.status(500).send({error:err})
 	}
 })
@@ -219,7 +209,7 @@ server.listen(PORT, async() => {
     await dbClient.connect()
     // Send a ping to confirm a successful connection
     await dbClient.db(dbName).command({ ping: 1 })
-    console.log("[mongodb] connected")
+    console.log("[mongodb] connected: " + dbName)
 		db = dbClient.db(dbName)
 
 		setInterval(function() {

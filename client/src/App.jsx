@@ -23,6 +23,7 @@ import Help from './components/help'
 
 // prod
 const serverUrl = 'https://beer-tech-web.onrender.com'
+
 console.log({serverUrl})
 
 const theme = createMuiTheme({
