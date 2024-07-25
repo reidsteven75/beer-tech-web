@@ -4,27 +4,28 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"TEST\"",
-    "build": "cd client && vite build",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "SERVER_URL='https://beer-tech-web.onrender.com/' cd client && vite build",
     "prod": "nodemon server.js --ignore node_modules",
     "dev": "MOCK_DATA=true nodemon server.js --ignore node_modules"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@babel/core": "^7.22.10",
-    "@babel/preset-env": "^7.22.9",
-    "@vitejs/plugin-react": "^4.0.4",
     "express": "^4.16.4",
     "lodash": "^4.17.11",
     "moment": "^2.23.0",
     "mongodb": "^6.8.0",
-    "nodemon": "^3.1.4",
     "object-sizeof": "^1.3.0",
-    "react-scripts": "5.0.1",
     "request": "^2.88.0",
     "serve-favicon": "^2.5.0",
     "socket.io": "^2.2.0",
+    "react-scripts": "5.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.10",
+    "@babel/preset-env": "^7.22.9",
+    "@vitejs/plugin-react": "^4.0.4",
     "vite": "^4.5.1",
     "vite-plugin-remove-console": "^2.1.1"
   }

@@ -21,7 +21,11 @@ $ npm run build
 
 Deploy (render.com)
 =======
-1)
+1) Run from root
 ```
 $ npm run build
 ```
+
+2) Push commit
+
+3) Render.com deploys

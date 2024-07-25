@@ -16,12 +16,7 @@
     "react-dom": "^16.7.0",
     "react-scripts": "2.1.3",
     "react-spinners": "^0.14.1",
-    "socket.io-client": "^2.2.0",
-    "@babel/core": "^7.22.10",
-    "@babel/preset-env": "^7.22.9",
-    "@vitejs/plugin-react": "^4.0.4",
-    "vite": "^4.5.1",
-    "vite-plugin-remove-console": "^2.1.1"
+    "socket.io-client": "^2.2.0"
   },
   "scripts": {
     "start": "node vite.dev.js",
@@ -34,6 +29,10 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    
+    "@babel/core": "^7.22.10",
+    "@babel/preset-env": "^7.22.9",
+    "@vitejs/plugin-react": "^4.0.4",
+    "vite": "^4.5.1",
+    "vite-plugin-remove-console": "^2.1.1"
   }
 }
