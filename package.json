@@ -5,8 +5,9 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js --ignore node_modules",
-    "dev-mock-data": "MOCK_DATA=true nodemon server.js --ignore node_modules"
+    "build": "cd client && vite build",
+    "prod": "nodemon server.js --ignore node_modules",
+    "dev": "MOCK_DATA=true nodemon server.js --ignore node_modules"
   },
   "author": "",
   "license": "ISC",
@@ -22,6 +23,10 @@
     "react-scripts": "5.0.1"
   },
   "devDependencies": {
-    "nodemon": "^1.18.9"
+    "@babel/core": "^7.22.10",
+    "@babel/preset-env": "^7.22.9",
+    "@vitejs/plugin-react": "^4.0.4",
+    "vite": "^4.5.1",
+    "vite-plugin-remove-console": "^2.1.1"
   }
 }
