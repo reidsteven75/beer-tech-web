@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "SERVER_URL='https://beer-tech-web.onrender.com/' cd client && vite build",
+    "build": "cd client && vite build",
     "prod": "nodemon server.js --ignore node_modules",
     "dev": "MOCK_DATA=true nodemon server.js --ignore node_modules"
   },

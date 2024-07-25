@@ -18,7 +18,11 @@ import ValueSensor from './components/value-sensor'
 import Help from './components/help'
 // import { SlowBuffer } from 'buffer';
 
-const serverUrl = process.env.SERVER_URL || 'http://localhost:3001'
+// dev
+// const serverUrl = 'http://localhost:3001'
+
+// prod
+const serverUrl = 'https://beer-tech-web.onrender.com/'
 console.log({serverUrl})
 
 const theme = createMuiTheme({
